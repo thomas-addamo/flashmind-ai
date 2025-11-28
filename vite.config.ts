@@ -8,6 +8,8 @@ export default defineConfig({
   // Deve corrispondere al nome del tuo repository: /nome-repo/
   base: '/flashmind-ai/',
   build: {
-    target: 'esnext'
+    target: 'esnext',
+    outDir: 'dist',
+    emptyOutDir: true,
   }
 });

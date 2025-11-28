@@ -1,13 +1,23 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { Settings, Flashcard, CardType } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
-
 export const generateFlashcards = async (
   text: string, 
   settings: Settings
 ): Promise<Flashcard[]> => {
   
+  // LAZY INITIALIZATION:
+  // Inizializziamo il client qui dentro invece che globalmente.
+  // Questo previene il crash dell'intera applicazione (pagina bianca) all'avvio
+  // se la chiave API non è presente o se c'è un errore di configurazione.
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("API Key non trovata. Assicurati di aver configurato il segreto VITE_GEMINI_API_KEY su GitHub.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+
   const enabledTypes: string[] = [];
   if (settings.includeTrueFalse) enabledTypes.push("true_false (Vero o Falso)");
   if (settings.includeMultipleChoice) enabledTypes.push("multiple_choice (Risposta Multipla a 4 opzioni)");
@@ -79,8 +89,12 @@ export const generateFlashcards = async (
       id: index + 1
     }));
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Errore durante la generazione delle flashcard:", error);
+    // Gestione errore più dettagliata per l'utente
+    if (error.message?.includes("API Key")) {
+      throw new Error("Errore API Key: " + error.message);
+    }
     throw new Error("Impossibile generare le flashcard. Riprova o controlla il testo.");
   }
 };
