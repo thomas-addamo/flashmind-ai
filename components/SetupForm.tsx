@@ -2,7 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { Difficulty, Settings, UserInput } from '../types';
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Imposta il worker per PDF.js
+// Configura il worker per l'ambiente di produzione
+// Usiamo un CDN specifico per garantire la compatibilità su GitHub Pages senza configurazioni complesse di Webpack/Vite
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.worker.min.mjs`;
 
 interface SetupFormProps {
@@ -33,6 +34,7 @@ const SetupForm: React.FC<SetupFormProps> = ({ onStart, isLoading }) => {
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
+        // @ts-ignore - items structure compatibility
         const pageText = textContent.items.map((item: any) => item.str).join(' ');
         fullText += pageText + '\n';
       }
