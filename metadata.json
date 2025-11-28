@@ -1,0 +1,5 @@
+{
+  "name": "FlashMind AI - Studio Intelligente",
+  "description": "Genera flash card automatiche dai tuoi documenti per studiare in modo efficace. Supporta risposte multiple, vero/falso e domande aperte con valutazione in stile scolastico italiano.",
+  "requestFramePermissions": []
+}
